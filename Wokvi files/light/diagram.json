@@ -1,0 +1,143 @@
+{
+  "version": 1,
+  "author": "Saurabh Raut",
+  "editor": "wokwi",
+  "parts": [
+    { "type": "board-esp32-devkit-c-v4", "id": "esp", "top": 134.4, "left": -139.16, "attrs": {} },
+    {
+      "type": "wokwi-led-strip",
+      "id": "strip1",
+      "top": 78.9,
+      "left": 115.2,
+      "attrs": { "pixels": "2" }
+    },
+    {
+      "type": "wokwi-led-strip",
+      "id": "strip2",
+      "top": 78.9,
+      "left": 182.4,
+      "attrs": { "pixels": "2" }
+    },
+    {
+      "type": "wokwi-led-strip",
+      "id": "strip3",
+      "top": 78.9,
+      "left": 249.6,
+      "attrs": { "pixels": "2" }
+    },
+    {
+      "type": "wokwi-led-strip",
+      "id": "strip4",
+      "top": 78.9,
+      "left": 316.8,
+      "attrs": { "pixels": "2" }
+    },
+    {
+      "type": "wokwi-led-strip",
+      "id": "strip5",
+      "top": 78.9,
+      "left": 384,
+      "attrs": { "pixels": "2" }
+    },
+    {
+      "type": "wokwi-led-strip",
+      "id": "strip6",
+      "top": 78.9,
+      "left": 451.2,
+      "attrs": { "pixels": "2" }
+    },
+    {
+      "type": "wokwi-led-strip",
+      "id": "strip7",
+      "top": 78.9,
+      "left": 518.4,
+      "attrs": { "pixels": "2" }
+    },
+    {
+      "type": "wokwi-led-strip",
+      "id": "strip8",
+      "top": 78.9,
+      "left": 585.6,
+      "attrs": { "pixels": "2" }
+    },
+    {
+      "type": "wokwi-led-strip",
+      "id": "strip9",
+      "top": 78.9,
+      "left": 652.8,
+      "attrs": { "pixels": "2" }
+    },
+    {
+      "type": "wokwi-led-strip",
+      "id": "strip10",
+      "top": 78.9,
+      "left": 720,
+      "attrs": { "pixels": "2" }
+    },
+    {
+      "type": "wokwi-led-strip",
+      "id": "strip11",
+      "top": 78.9,
+      "left": 787.2,
+      "attrs": { "pixels": "2" }
+    },
+    {
+      "type": "wokwi-led-strip",
+      "id": "strip12",
+      "top": 78.9,
+      "left": 854.4,
+      "attrs": { "pixels": "2" }
+    },
+    {
+      "type": "wokwi-led-strip",
+      "id": "strip13",
+      "top": 78.9,
+      "left": 921.6,
+      "attrs": { "pixels": "2" }
+    }
+  ],
+  "connections": [
+    [ "esp:TX", "$serialMonitor:RX", "", [] ],
+    [ "esp:RX", "$serialMonitor:TX", "", [] ],
+    [ "esp:5", "strip1:DIN", "green", [ "h105.6", "v-153.2" ] ],
+    [ "esp:VN", "strip1:VSS", "green", [ "h-28.65", "v-85.6" ] ],
+    [ "esp:GND.2", "strip1:VDD", "black", [ "v0" ] ],
+    [ "strip1:VSS.2", "strip2:VSS", "black", [ "h0" ] ],
+    [ "strip1:DOUT", "strip2:DIN", "green", [ "h0" ] ],
+    [ "strip1:VDD.2", "strip2:VDD", "red", [ "v0" ] ],
+    [ "strip2:VSS.2", "strip3:VSS", "black", [ "h0" ] ],
+    [ "strip2:DOUT", "strip3:DIN", "green", [ "h0" ] ],
+    [ "strip2:VDD.2", "strip3:VDD", "red", [ "v0" ] ],
+    [ "strip3:VSS.2", "strip4:VSS", "black", [ "h0" ] ],
+    [ "strip3:DOUT", "strip4:DIN", "green", [ "h0" ] ],
+    [ "strip3:VDD.2", "strip4:VDD", "red", [ "v0" ] ],
+    [ "strip4:VSS.2", "strip5:VSS", "black", [ "h0" ] ],
+    [ "strip4:DOUT", "strip5:DIN", "green", [ "h0" ] ],
+    [ "strip4:VDD.2", "strip5:VDD", "red", [ "v0" ] ],
+    [ "strip6:VSS", "strip5:VSS.2", "black", [ "h0" ] ],
+    [ "strip5:DOUT", "strip6:DIN", "green", [ "h0" ] ],
+    [ "strip5:VDD.2", "strip6:VDD", "red", [ "v0" ] ],
+    [ "strip6:VSS.2", "strip7:VSS", "black", [ "h0" ] ],
+    [ "strip6:DOUT", "strip7:DIN", "green", [ "h0" ] ],
+    [ "strip6:VDD.2", "strip7:VDD", "red", [ "v0" ] ],
+    [ "strip7:VSS.2", "strip8:VSS", "black", [ "h0" ] ],
+    [ "strip7:DOUT", "strip8:DIN", "green", [ "h0" ] ],
+    [ "strip7:VDD.2", "strip8:VDD", "red", [ "v0" ] ],
+    [ "strip8:VSS.2", "strip9:VSS", "black", [ "h0" ] ],
+    [ "strip8:DOUT", "strip9:DIN", "green", [ "h0" ] ],
+    [ "strip8:VDD.2", "strip9:VDD", "red", [ "v0" ] ],
+    [ "strip9:VSS.2", "strip10:VSS", "black", [ "h0" ] ],
+    [ "strip9:DOUT", "strip10:DIN", "green", [ "h0" ] ],
+    [ "strip9:VDD.2", "strip10:VDD", "red", [ "v0" ] ],
+    [ "strip10:VSS.2", "strip11:VSS", "black", [ "h0" ] ],
+    [ "strip10:DOUT", "strip11:DIN", "green", [ "h0" ] ],
+    [ "strip10:VDD.2", "strip11:VDD", "red", [ "v0" ] ],
+    [ "strip11:VSS.2", "strip12:VSS", "black", [ "h0" ] ],
+    [ "strip11:DOUT", "strip12:DIN", "green", [ "h0" ] ],
+    [ "strip11:VDD.2", "strip12:VDD", "red", [ "v0" ] ],
+    [ "strip12:VSS.2", "strip13:VSS", "black", [ "h0" ] ],
+    [ "strip12:DOUT", "strip13:DIN", "green", [ "h5.2", "v-0.4" ] ],
+    [ "strip12:VDD.2", "strip13:VDD", "red", [ "v0" ] ]
+  ],
+  "dependencies": {}
+}

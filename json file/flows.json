@@ -1,0 +1,688 @@
+[
+    {
+        "id": "55b54733a7c623ba",
+        "type": "tab",
+        "label": "Flow 2",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "d924bf2f271acca9",
+        "type": "mqtt-broker",
+        "name": "HiveMQ Public",
+        "broker": "broker.hivemq.com",
+        "port": 1883,
+        "clientid": "",
+        "autoConnect": true,
+        "usetls": false,
+        "protocolVersion": 4,
+        "keepalive": 60,
+        "cleansession": true,
+        "autoUnsubscribe": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthRetain": "false",
+        "birthPayload": "",
+        "birthMsg": {},
+        "closeTopic": "",
+        "closeQos": "0",
+        "closeRetain": "false",
+        "closePayload": "",
+        "closeMsg": {},
+        "willTopic": "",
+        "willQos": "0",
+        "willRetain": "false",
+        "willPayload": "",
+        "willMsg": {},
+        "userProps": "",
+        "sessionExpiry": ""
+    },
+    {
+        "id": "4f887fa868ce2719",
+        "type": "ui-base",
+        "name": "My Dashboard",
+        "path": "/dashboard",
+        "appIcon": "",
+        "includeClientData": true,
+        "acceptsClientConfig": [
+            "ui-notification",
+            "ui-control"
+        ],
+        "showPathInSidebar": false,
+        "headerContent": "page",
+        "navigationStyle": "default",
+        "titleBarStyle": "default",
+        "showReconnectNotification": true,
+        "notificationDisplayTime": 1,
+        "showDisconnectNotification": true,
+        "allowInstall": false
+    },
+    {
+        "id": "c061e22969325252",
+        "type": "ui-theme",
+        "name": "Default Theme",
+        "colors": {
+            "surface": "#fcfcfd",
+            "primary": "#0d74ce",
+            "bgPage": "#f9f9fb",
+            "groupBg": "#ffffff",
+            "groupOutline": "#d9d9e0"
+        },
+        "sizes": {
+            "density": "default",
+            "pagePadding": "12px",
+            "groupGap": "12px",
+            "groupBorderRadius": "4px",
+            "widgetGap": "12px"
+        }
+    },
+    {
+        "id": "1c354bc7d6d8984d",
+        "type": "mqtt-broker",
+        "name": "HiveMQ",
+        "broker": "broker.hivemq.com",
+        "port": 1883,
+        "clientid": "",
+        "autoConnect": true,
+        "usetls": false,
+        "protocolVersion": 4,
+        "keepalive": 60,
+        "cleansession": true,
+        "autoUnsubscribe": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthRetain": "false",
+        "birthPayload": "",
+        "birthMsg": {},
+        "closeTopic": "",
+        "closeQos": "0",
+        "closeRetain": "false",
+        "closePayload": "",
+        "closeMsg": {},
+        "willTopic": "",
+        "willQos": "0",
+        "willRetain": "false",
+        "willPayload": "",
+        "willMsg": {},
+        "userProps": "",
+        "sessionExpiry": ""
+    },
+    {
+        "id": "077b2bccd9a8fbe3",
+        "type": "ui-page",
+        "name": "Lighting Control Dashboard",
+        "ui": "4f887fa868ce2719",
+        "path": "/page2",
+        "icon": "home",
+        "layout": "grid",
+        "theme": "default",
+        "breakpoints": [
+            {
+                "name": "Default",
+                "px": "0",
+                "cols": "3"
+            },
+            {
+                "name": "Tablet",
+                "px": "576",
+                "cols": "6"
+            },
+            {
+                "name": "Small Desktop",
+                "px": "768",
+                "cols": "9"
+            },
+            {
+                "name": "Desktop",
+                "px": "1024",
+                "cols": "12"
+            }
+        ],
+        "order": -1,
+        "className": "",
+        "visible": true,
+        "disabled": false
+    },
+    {
+        "id": "9ac304a5522e2187",
+        "type": "ui-group",
+        "name": "Fixed Colors",
+        "page": "077b2bccd9a8fbe3",
+        "width": "9",
+        "height": 1,
+        "order": -1,
+        "showTitle": true,
+        "className": "",
+        "visible": "true",
+        "disabled": "false",
+        "groupType": "default"
+    },
+    {
+        "id": "22eae9ab1904db6a",
+        "type": "ui-group",
+        "name": "Lighting Effects",
+        "page": "077b2bccd9a8fbe3",
+        "width": "9",
+        "height": "2",
+        "order": -1,
+        "showTitle": true,
+        "className": "",
+        "visible": "true",
+        "disabled": "false",
+        "groupType": "default"
+    },
+    {
+        "id": "01188ac862d284b9",
+        "type": "ui-group",
+        "name": "Power Control",
+        "page": "077b2bccd9a8fbe3",
+        "width": "9",
+        "height": "2",
+        "order": -1,
+        "showTitle": true,
+        "className": "",
+        "visible": "true",
+        "disabled": "false",
+        "groupType": "default"
+    },
+    {
+        "id": "31dc0514924749e2",
+        "type": "mqtt out",
+        "z": "55b54733a7c623ba",
+        "name": "",
+        "topic": "smartlight/control",
+        "qos": "0",
+        "retain": "false",
+        "respTopic": "",
+        "contentType": "",
+        "userProps": "",
+        "correl": "",
+        "expiry": "",
+        "broker": "1c354bc7d6d8984d",
+        "x": 770,
+        "y": 340,
+        "wires": []
+    },
+    {
+        "id": "0bdacaa5c4150285",
+        "type": "inject",
+        "z": "55b54733a7c623ba",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "RED",
+        "payloadType": "str",
+        "x": 210,
+        "y": 300,
+        "wires": [
+            [
+                "31dc0514924749e2"
+            ]
+        ]
+    },
+    {
+        "id": "eebcc83c143f13a7",
+        "type": "inject",
+        "z": "55b54733a7c623ba",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "GREEN",
+        "payloadType": "str",
+        "x": 210,
+        "y": 360,
+        "wires": [
+            [
+                "31dc0514924749e2"
+            ]
+        ]
+    },
+    {
+        "id": "efc495e375cdcf1e",
+        "type": "inject",
+        "z": "55b54733a7c623ba",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "BLUE",
+        "payloadType": "str",
+        "x": 210,
+        "y": 420,
+        "wires": [
+            [
+                "31dc0514924749e2"
+            ]
+        ]
+    },
+    {
+        "id": "a386bb267c41959e",
+        "type": "inject",
+        "z": "55b54733a7c623ba",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "YELLOW",
+        "payloadType": "str",
+        "x": 220,
+        "y": 480,
+        "wires": [
+            [
+                "31dc0514924749e2"
+            ]
+        ]
+    },
+    {
+        "id": "3f8134d0856768c6",
+        "type": "inject",
+        "z": "55b54733a7c623ba",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "PURPLE",
+        "payloadType": "str",
+        "x": 220,
+        "y": 540,
+        "wires": [
+            [
+                "31dc0514924749e2"
+            ]
+        ]
+    },
+    {
+        "id": "2e333c27487d15e0",
+        "type": "inject",
+        "z": "55b54733a7c623ba",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "CYAN",
+        "payloadType": "str",
+        "x": 210,
+        "y": 600,
+        "wires": [
+            [
+                "31dc0514924749e2"
+            ]
+        ]
+    },
+    {
+        "id": "3f708a74c44b3eb7",
+        "type": "inject",
+        "z": "55b54733a7c623ba",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "WHITE",
+        "payloadType": "str",
+        "x": 210,
+        "y": 660,
+        "wires": [
+            [
+                "31dc0514924749e2"
+            ]
+        ]
+    },
+    {
+        "id": "5f096a5e526ae336",
+        "type": "inject",
+        "z": "55b54733a7c623ba",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "PINK",
+        "payloadType": "str",
+        "x": 210,
+        "y": 720,
+        "wires": [
+            [
+                "31dc0514924749e2"
+            ]
+        ]
+    },
+    {
+        "id": "188afa4aa66fb1f6",
+        "type": "inject",
+        "z": "55b54733a7c623ba",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "OFF",
+        "payloadType": "str",
+        "x": 210,
+        "y": 900,
+        "wires": [
+            [
+                "31dc0514924749e2"
+            ]
+        ]
+    },
+    {
+        "id": "210c04e133079a46",
+        "type": "inject",
+        "z": "55b54733a7c623ba",
+        "name": "AUTO COLOR CHANGE",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "AUTO",
+        "payloadType": "str",
+        "x": 270,
+        "y": 780,
+        "wires": [
+            [
+                "31dc0514924749e2"
+            ]
+        ]
+    },
+    {
+        "id": "0173b7b31e3ba4c9",
+        "type": "inject",
+        "z": "55b54733a7c623ba",
+        "name": "RUNNING LIGHT",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "RUN",
+        "payloadType": "str",
+        "x": 240,
+        "y": 840,
+        "wires": [
+            [
+                "31dc0514924749e2"
+            ]
+        ]
+    },
+    {
+        "id": "8f792a0c62263b26",
+        "type": "ui-button-group",
+        "z": "55b54733a7c623ba",
+        "name": "Fixed Colors",
+        "group": "9ac304a5522e2187",
+        "order": 0,
+        "width": "9",
+        "height": 1,
+        "label": "",
+        "className": "",
+        "rounded": true,
+        "useThemeColors": false,
+        "passthru": false,
+        "options": [
+            {
+                "label": "RED",
+                "icon": "",
+                "value": "RED",
+                "valueType": "str",
+                "color": "#ff0000"
+            },
+            {
+                "label": "GREEN",
+                "icon": "",
+                "value": "GREEN",
+                "valueType": "str",
+                "color": "#00ff00"
+            },
+            {
+                "label": "BLUE",
+                "icon": "",
+                "value": "BLUE",
+                "valueType": "str",
+                "color": "#0000ff"
+            },
+            {
+                "label": "YELLOW",
+                "icon": "",
+                "value": "YELLOW",
+                "valueType": "str",
+                "color": "#e1ff00"
+            },
+            {
+                "label": "PURPLE",
+                "icon": "",
+                "value": "PURPLE",
+                "valueType": "str",
+                "color": "#800080"
+            },
+            {
+                "label": "CYAN",
+                "icon": "",
+                "value": "CYAN",
+                "valueType": "str",
+                "color": "#00ffff"
+            },
+            {
+                "label": "PINK",
+                "icon": "",
+                "value": "PINK",
+                "valueType": "str",
+                "color": "#ffc0cb"
+            }
+        ],
+        "topic": "topic",
+        "topicType": "msg",
+        "x": 290,
+        "y": 1120,
+        "wires": [
+            [
+                "31dc0514924749e2"
+            ]
+        ]
+    },
+    {
+        "id": "3af37be23bde6c18",
+        "type": "ui-button-group",
+        "z": "55b54733a7c623ba",
+        "name": "Lighting Effect",
+        "group": "22eae9ab1904db6a",
+        "order": 0,
+        "width": "9",
+        "height": "1",
+        "label": "",
+        "className": "",
+        "rounded": true,
+        "useThemeColors": true,
+        "passthru": false,
+        "options": [
+            {
+                "label": "AUTO",
+                "icon": "",
+                "value": "AUTO",
+                "valueType": "str",
+                "color": "#009933"
+            },
+            {
+                "label": "RUN",
+                "icon": "",
+                "value": "RUN",
+                "valueType": "str",
+                "color": "#999999"
+            }
+        ],
+        "topic": "topic",
+        "topicType": "msg",
+        "x": 300,
+        "y": 1200,
+        "wires": [
+            [
+                "31dc0514924749e2"
+            ]
+        ]
+    },
+    {
+        "id": "cb1cdd0843c4a17c",
+        "type": "ui-button",
+        "z": "55b54733a7c623ba",
+        "group": "01188ac862d284b9",
+        "name": "OFF",
+        "label": "OFF",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "emulateClick": false,
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "iconPosition": "left",
+        "payload": "OFF",
+        "payloadType": "str",
+        "topic": "topic",
+        "topicType": "msg",
+        "buttonColor": "",
+        "textColor": "",
+        "iconColor": "",
+        "enableClick": true,
+        "enablePointerdown": false,
+        "pointerdownPayload": "",
+        "pointerdownPayloadType": "str",
+        "enablePointerup": false,
+        "pointerupPayload": "",
+        "pointerupPayloadType": "str",
+        "x": 330,
+        "y": 1280,
+        "wires": [
+            [
+                "31dc0514924749e2"
+            ]
+        ]
+    },
+    {
+        "id": "8c7feabf564f2406",
+        "type": "global-config",
+        "env": [],
+        "modules": {
+            "@flowfuse/node-red-dashboard": "1.32.0"
+        }
+    }
+]
