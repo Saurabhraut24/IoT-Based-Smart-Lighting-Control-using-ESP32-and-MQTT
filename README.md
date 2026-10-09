@@ -1,244 +1,315 @@
-# Smart Lighting Control using ESP32, MQTT and Node-RED
 
-A simulation-based Internet of Things (IoT) mini-project for remotely controlling an RGB LED through a web dashboard. The dashboard is built with Node-RED and FlowFuse Dashboard, messages are exchanged using MQTT through the HiveMQ public broker, and an ESP32 simulated in Wokwi receives the commands and controls the RGB LED.
 
-> **Project status:** Simulation tested in Wokwi. The `RED`, `GREEN`, `BLUE`, and `OFF` commands have been tested successfully.
-
+Readme · MD
+# IoT-Based Smart Lighting Control using ESP32, MQTT and Node-RED
+ 
+A simulation-based Internet of Things (IoT) mini-project that remotely controls **26 WS2812 addressable LEDs** (13 strips × 2 pixels) from a web dashboard. The dashboard is built in **Node-RED (Dashboard 2.0)**, commands travel over **MQTT** through the **HiveMQ public broker**, and an **ESP32 simulated in Wokwi** receives them and drives the LEDs with fixed colours, an automatic colour-change mode, a running-light effect and OFF.
+ 
+> **Project status:** Simulation tested in Wokwi. The `RED`, `GREEN`, `BLUE` and `OFF` commands have been tested through the dashboard. Other commands are implemented in the firmware but are not listed as tested (see [Test Results](#12-test-results)).
+ 
+---
+ 
 ## Table of Contents
-
-- [1. Project Overview](#1-project-overview)
-- [2. Problem Statement](#2-problem-statement)
-- [3. Objectives](#3-objectives)
-- [4. Features](#4-features)
-- [5. System Architecture](#5-system-architecture)
-- [6. Working Principle](#6-working-principle)
-- [7. Technologies and Tools](#7-technologies-and-tools)
-- [8. Circuit Design and Pin Connections](#8-circuit-design-and-pin-connections)
-- [9. MQTT Configuration](#9-mqtt-configuration)
-- [10. Software and Firmware Logic](#10-software-and-firmware-logic)
-- [11. Project Folder Structure](#11-project-folder-structure)
-- [12. Setup and Execution](#12-setup-and-execution)
-- [13. Test Results](#13-test-results)
-- [14. Screenshots and Demonstration](#14-screenshots-and-demonstration)
-- [15. Limitations](#15-limitations)
-- [16. Future Enhancements](#16-future-enhancements)
-- [17. Safety and Security Notes](#17-safety-and-security-notes)
-- [18. Author](#18-author)
-- [19. License](#19-license)
-
+ 
+1. [Project Overview](#1-project-overview)
+2. [Problem Statement](#2-problem-statement)
+3. [Objectives](#3-objectives)
+4. [Features](#4-features)
+5. [System Architecture](#5-system-architecture)
+6. [Working Principle](#6-working-principle)
+7. [Technologies and Tools](#7-technologies-and-tools)
+8. [Circuit Design and Connections](#8-circuit-design-and-connections)
+9. [MQTT Configuration and Commands](#9-mqtt-configuration-and-commands)
+10. [Firmware Logic](#10-firmware-logic)
+11. [Setup and Execution](#11-setup-and-execution)
+12. [Test Results](#12-test-results)
+13. [Screenshots and Demonstration](#13-screenshots-and-demonstration)
+14. [Project Folder Structure](#14-project-folder-structure)
+15. [Limitations](#15-limitations)
+16. [Future Enhancements](#16-future-enhancements)
+17. [Safety and Security Notes](#17-safety-and-security-notes)
+18. [Author](#18-author)
+---
+ 
 ## 1. Project Overview
-
-The **Smart Lighting Control using ESP32, MQTT and Node-RED** project demonstrates how an IoT device can be controlled remotely through a dashboard. A user selects a colour on the dashboard. Node-RED publishes the selected command to an MQTT topic. The HiveMQ broker forwards the message to the ESP32, which is subscribed to that topic. The ESP32 interprets the command and updates the RGB LED outputs.
-
-The project is implemented as a **simulation**, using Wokwi for the ESP32 and RGB LED circuit. It demonstrates the integration of an embedded controller, wireless connectivity, messaging protocol, and web-based user interface.
-
+ 
+This project demonstrates how a lighting system can be controlled remotely using IoT technologies. A user presses a button on the Node-RED dashboard. Node-RED publishes the command text to the MQTT topic `smartlight/control`. The HiveMQ broker forwards the message to the ESP32, which is subscribed to the same topic. The ESP32 interprets the command and updates the WS2812 LED strip.
+ 
+The system is implemented as a **simulation** in Wokwi and combines an embedded controller, Wi-Fi connectivity, the MQTT publish/subscribe protocol and a browser-based user interface.
+ 
 ## 2. Problem Statement
-
-Controlling lighting locally can be inconvenient when a user wants to change the light state from a dashboard or remote interface. This project demonstrates a simple IoT-based approach in which lighting commands are sent over MQTT and applied by a simulated ESP32.
-
+ 
+Conventional lighting is switched manually and offers no remote control, colour selection or automated effects. This project designs a simple IoT-based approach in which lighting colours and effects are selected from a dashboard, sent over MQTT and applied by an ESP32.
+ 
 ## 3. Objectives
-
+ 
 - Build and demonstrate an IoT smart-lighting prototype in Wokwi.
-- Connect an ESP32 simulation to Wi-Fi and an MQTT broker.
+- Connect the ESP32 simulation to Wi-Fi and an MQTT broker.
 - Publish lighting commands from a Node-RED dashboard.
 - Subscribe to an MQTT topic on the ESP32 and interpret incoming commands.
-- Control WS2812/NeoPixel LEDs using fixed colours, automatic colour changes, a running-light effect, and an OFF command.
-- Validate the dashboard-to-ESP32 communication path through simulation output and serial logs.
-
+- Control 26 WS2812/NeoPixel LEDs using fixed colours, an automatic colour-change mode, a running-light effect and an OFF command.
+- Validate the dashboard → MQTT → ESP32 → LED path using LED output and Serial Monitor logs.
 ## 4. Features
-
-- Browser-based light-control dashboard.
-- Button-group controls for `RED`, `GREEN`, `BLUE`, and `OFF`.
-- MQTT communication through the HiveMQ public broker.
-- ESP32 Wi-Fi connection in Wokwi.
-- MQTT command reception and processing.
-- Serial Monitor messages showing received commands and light states.
-
-The firmware also contains an `ON` command that sets all three RGB channels HIGH (white). This command should be listed as tested functionality only after it has been tested separately.
-
+ 
+- Browser dashboard with **Fixed Colors**, **Lighting Effects** and **Power Control** sections.
+- Fixed colours: `RED`, `GREEN`, `BLUE`, `YELLOW`, `PURPLE`, `CYAN`, `PINK` (and `WHITE` in firmware).
+- **AUTO** mode – cycles through 7 colours every 1 second.
+- **RUN** mode – a red running light with a 2-pixel fading trail that wraps from LED 26 back to LED 1.
+- **OFF** – turns all LEDs off.
+- Non-blocking effects using `millis()`, so MQTT stays responsive.
+- Commands can also be typed in the Serial Monitor for local testing.
+- Serial Monitor logs for Wi-Fi, MQTT status, received commands and active mode.
+- Automatic MQTT reconnection with a unique client ID.
 ## 5. System Architecture
-
+ 
 ```text
-             USER
-              |
-              v
-+------------------------------+
-| Web Browser                  |
-| FlowFuse Dashboard           |
-| RED | GREEN | BLUE | OFF     |
-+---------------+--------------+
-                |
-                v
-+------------------------------+
-| Node-RED                     |
-| Dashboard Button Group       |
-| MQTT Output Node             |
-+---------------+--------------+
-                |
-                | MQTT PUBLISH
-                | Topic: smartlight/control
-                v
-+------------------------------+
-| HiveMQ Public MQTT Broker    |
-+---------------+--------------+
-                ^
-                | MQTT SUBSCRIBE
-                |
-+---------------+--------------+
-| ESP32 (Wokwi Simulation)     |
-| Wi-Fi + PubSubClient         |
-| Command Callback / Logic     |
-+---------------+--------------+
-                |
-                | GPIO 25, 26, 27
-                v
-+------------------------------+
-| RGB LED                      |
-| Red / Green / Blue / Off     |
-+------------------------------+
+                    USER
+                     |
+                     v
+        +---------------------------+
+        | Web Browser               |
+        | Node-RED Dashboard 2.0    |
+        +-------------+-------------+
+                      |
+                      v
+        +---------------------------+
+        | Node-RED                  |
+        | Button Groups -> MQTT Out |
+        +-------------+-------------+
+                      |  MQTT PUBLISH
+                      |  Topic: smartlight/control
+                      v
+        +---------------------------+
+        | HiveMQ Public MQTT Broker |
+        | broker.hivemq.com:1883    |
+        +-------------+-------------+
+                      |  MQTT SUBSCRIBE (over Wi-Fi)
+                      v
+        +---------------------------+
+        | ESP32 (Wokwi Simulation)  |
+        | PubSubClient + Logic      |
+        +-------------+-------------+
+                      |  GPIO 5 (data)
+                      v
+        +---------------------------+
+        | 13 x WS2812 strips        |
+        | 2 pixels each = 26 LEDs   |
+        +---------------------------+
 ```
-
-### Architecture components
-
+ 
 | Layer | Component | Responsibility |
 |---|---|---|
-| User interface | FlowFuse Dashboard | Lets the user select a lighting command |
-| Flow / application logic | Node-RED | Sends the selected command to MQTT |
-| Communication | MQTT | Transfers messages using a publish/subscribe model |
-| Broker | HiveMQ Public Broker | Routes published messages to subscribers |
-| Embedded processing | ESP32 in Wokwi | Receives and interprets MQTT commands |
-| Output / actuator | RGB LED | Shows the selected colour or turns off |
-
+| User interface | Node-RED Dashboard 2.0 | Lets the user choose a colour, effect or OFF |
+| Application logic | Node-RED flow | Publishes the selected command to MQTT |
+| Communication | MQTT over Wi-Fi | Publish/subscribe message transfer |
+| Broker | HiveMQ public broker | Routes messages to subscribers |
+| Embedded processing | ESP32 (Wokwi) | Receives, parses and executes commands |
+| Actuator | 26 × WS2812 LEDs | Displays colours and effects |
+ 
 ## 6. Working Principle
-
+ 
 1. The user opens the Node-RED dashboard in a browser.
-2. The user selects `RED`, `GREEN`, `BLUE`, or `OFF`.
-3. The dashboard button group outputs the selected string.
-4. The Node-RED MQTT Out node publishes the string to `smartlight/control`.
-5. The HiveMQ broker receives the message and forwards it to connected subscribers of that topic.
-6. The ESP32 MQTT client receives the message through its callback.
-7. The firmware converts the command to uppercase and checks which command was received.
-8. The ESP32 sets GPIO 25, GPIO 26, and GPIO 27 accordingly.
-9. The RGB LED changes colour or switches off, and the Serial Monitor displays the command and state.
-
+2. The user presses a button, for example `RED`, `AUTO`, `RUN` or `OFF`.
+3. The dashboard outputs the command string to the MQTT Out node.
+4. Node-RED publishes it to the topic `smartlight/control`.
+5. HiveMQ forwards the message to all subscribers of that topic.
+6. The ESP32 `mqttCallback()` builds a string from the payload.
+7. `processCommand()` trims the text, converts it to uppercase and matches it against the supported commands.
+8. The ESP32 updates the 26 LEDs (static colour, AUTO cycle or RUN effect).
+9. The Serial Monitor prints the received command and the active mode.
 ## 7. Technologies and Tools
-
+ 
 | Technology / Tool | Use in the project |
 |---|---|
-| Wokwi | Online simulation of the ESP32 and RGB LED |
-| ESP32 DevKit C V4 | Simulated microcontroller |
-| Arduino C++ | ESP32 firmware language |
-| Wi-Fi | Network connectivity in Wokwi |
+| Wokwi | Online simulation of the ESP32 and the LED strips |
+| ESP32 DevKit-C V4 | Simulated microcontroller with built-in Wi-Fi |
+| WS2812 LED strips | Addressable LED actuators (13 strips × 2 pixels) |
+| Arduino C/C++ | ESP32 firmware |
+| Adafruit NeoPixel | Library to drive the WS2812 LEDs |
+| PubSubClient | MQTT client library for the ESP32 |
+| Wi-Fi (`Wokwi-GUEST`) | Network connectivity inside Wokwi |
 | MQTT | Messaging protocol |
 | HiveMQ Public Broker | MQTT broker |
-| PubSubClient | MQTT client library for ESP32 |
-| Node-RED | Flow-based integration and MQTT publishing |
-| FlowFuse Dashboard 2.0 | Browser dashboard controls |
-| Git and GitHub | Source-code version control and project hosting |
-
-## 8. Circuit Design and Pin Connections
-
+| Node-RED + Dashboard 2.0 | Flow-based integration and web dashboard |
+| Git and GitHub | Version control and project hosting |
+ 
+## 8. Circuit Design and Connections
+ 
 ### Components in the simulation
-
-- ESP32 DevKit C V4
-- One common-cathode RGB LED
-- Three 220 Ω resistors
+ 
+- ESP32 DevKit-C V4
+- 13 × WS2812 LED strips, 2 pixels each (26 LEDs in total)
 - Jumper-wire connections
-
-### Pin connection table
-
-| RGB LED pin/channel | Connection |
+### Connection summary
+ 
+| Connection | Details |
 |---|---|
-| Red channel (R) | ESP32 GPIO 25 through a 220 Ω resistor |
-| Green channel (G) | ESP32 GPIO 26 through a 220 Ω resistor |
-| Blue channel (B) | ESP32 GPIO 27 through a 220 Ω resistor |
-| Common cathode (COM) | ESP32 GND |
-
-**Note:** These are the connections used in the Wokwi simulation. Physical hardware has not been claimed as tested.
-
-## 9. MQTT Configuration
-
+| LED data input | ESP32 **GPIO 5** → `DIN` of strip 1 |
+| Strip-to-strip data | `DOUT` of each strip → `DIN` of the next strip (daisy chain) |
+| Power / ground | Supply and ground lines are chained from strip to strip (see `diagram.json`) |
+| LED order | Strip 1 contains LEDs 1–2, strip 2 contains LEDs 3–4, … strip 13 contains LEDs 25–26 |
+ 
+Firmware settings: `NUM_LEDS = 26`, `LED_PIN = 5`, `NEO_GRB + NEO_KHZ800`, brightness `80`.
+ 
+> These connections are for the Wokwi simulation. Operation on physical hardware has not been tested.
+ 
+## 9. MQTT Configuration and Commands
+ 
 | Parameter | Value |
 |---|---|
 | Broker hostname | `broker.hivemq.com` |
-| Port | `1883` |
-| MQTT version | MQTT 3.1.1 |
+| Port | `1883` (no TLS) |
 | Topic | `smartlight/control` |
-| QoS | `0` |
-| Retain | `false` |
+| Client ID | `ESP32-SmartLight-<random 4 digits>` |
 | Wokwi Wi-Fi SSID | `Wokwi-GUEST` |
 | Wokwi Wi-Fi password | Empty string |
-
-### Commands
-
-| Payload | Firmware action |
-|---|---|
-| `RED` | Turns on the red channel |
-| `GREEN` | Turns on the green channel |
-| `BLUE` | Turns on the blue channel |
-| `OFF` | Turns off all RGB channels |
-| `ON` | Sets all three RGB channels HIGH (white); test separately before claiming as verified |
-
-The topic must match in both the ESP32 firmware and the Node-RED MQTT Out node.
-
-## 10. Software and Firmware Logic
-
-### ESP32 firmware responsibilities
-
-- Connect to the Wokwi Wi-Fi network.
-- Connect to the MQTT broker.
-- Subscribe to `smartlight/control`.
-- Receive a message and build a command string from the payload.
-- Match the command against supported values.
-- Set the RGB LED GPIO pins.
-- Print the received command and resulting light state to the Serial Monitor.
-- Reconnect to MQTT if the connection is lost.
-
+ 
+The topic must be identical in the ESP32 firmware and the Node-RED MQTT Out node.
+ 
+### Supported commands
+ 
+Commands are not case-sensitive.
+ 
+| Payload | Action | On dashboard |
+|---|---|---|
+| `RED` | All LEDs red | Yes |
+| `GREEN` | All LEDs green | Yes |
+| `BLUE` | All LEDs blue | Yes |
+| `YELLOW` | All LEDs yellow | Yes |
+| `PURPLE` | All LEDs purple | Yes |
+| `CYAN` | All LEDs cyan | Yes |
+| `PINK` | All LEDs pink | Yes |
+| `WHITE` | All LEDs white | Inject node in flow |
+| `AUTO` | Cycles through 7 colours every 1000 ms | Yes |
+| `RUN` / `RUNNING` / `RUNNING LIGHT` | Red running light with trail, 70 ms per step | Yes (`RUN`) |
+| `OFF` | All LEDs off | Yes |
+ 
+Any other text prints `UNKNOWN COMMAND` and the list of valid commands on the Serial Monitor.
+ 
+## 10. Firmware Logic
+ 
+### Responsibilities
+ 
+- Initialise the Serial Monitor and the NeoPixel strip, with all LEDs off.
+- Connect to Wi-Fi and the MQTT broker, then subscribe to `smartlight/control`.
+- Parse incoming commands and select the light mode (`OFF_MODE`, `STATIC_MODE`, `AUTO_MODE`, `RUN_MODE`).
+- Run AUTO and RUN effects without `delay()`, using `millis()`.
+- Reconnect to MQTT automatically if the connection is lost.
+- Accept commands from the Serial Monitor as well as MQTT.
 ### Simplified algorithm
-
+ 
 ```text
 START
-  |
-Initialize Serial Monitor and RGB GPIO pins
-  |
-Connect to Wi-Fi
-  |
-Configure MQTT broker and callback
-  |
-Connect to MQTT broker
-  |
-Subscribe to "smartlight/control"
-  |
+  Initialise Serial, NeoPixel strip (26 LEDs, brightness 80), all LEDs OFF
+  Connect to Wi-Fi
+  Set MQTT broker and callback; connect; subscribe "smartlight/control"
+ 
 LOOP:
-  If MQTT is disconnected:
-      Reconnect and subscribe again
-  Process incoming MQTT messages
-  When a command arrives:
-      Read payload
-      Convert command to uppercase
-      If RED: turn on red channel
-      Else if GREEN: turn on green channel
-      Else if BLUE: turn on blue channel
-      Else if OFF: turn all channels off
-      Else if ON: turn all channels on
-      Print command and state
+  If MQTT disconnected -> reconnect and subscribe
+  mqttClient.loop()                      // receive messages
+  Read Serial Monitor command (if any)
+ 
+  On command (MQTT or Serial):
+      trim + convert to UPPERCASE
+      colour name  -> mode = STATIC, set all 26 LEDs to that colour
+      AUTO         -> mode = AUTO
+      RUN/RUNNING  -> mode = RUN, start from LED 1
+      OFF          -> mode = OFF, clear all LEDs
+      otherwise    -> print UNKNOWN COMMAND
+ 
+  If mode == AUTO: every 1000 ms show next of 7 colours
+  If mode == RUN : every 70 ms move red LED one step (with 2-pixel trail),
+                   after LED 26 return immediately to LED 1
 END LOOP
 ```
-
-### Important files
-
-- `sketch.ino` — ESP32 firmware.
-- `diagram.json` — Wokwi circuit and wiring configuration.
-- `libraries.txt` — Wokwi library list; includes `PubSubClient`.
-
-## 11. Project Folder Structure
-
-The repository currently includes the Wokwi simulation, a Node-RED-related folder, and a JSON flow export. A simplified view of the visible repository structure is:
-
+ 
+## 11. Setup and Execution
+ 
+### A. Start the Wokwi simulation
+ 
+1. Open the Wokwi project containing `sketch.ino`, `diagram.json` and `libraries.txt`.
+2. Make sure `libraries.txt` contains:
+```text
+   Adafruit NeoPixel
+   PubSubClient
+```
+ 
+3. Start the simulation and open the Serial Monitor.
+4. Confirm that Wi-Fi connects, MQTT connects and the device subscribes to `smartlight/control`.
+### B. Start Node-RED
+ 
+```bash
+node-red
+```
+ 
+Open the editor at `http://127.0.0.1:1880`. The dashboard is normally available at `http://127.0.0.1:1880/dashboard/page1` (the path may differ with your configuration).
+ 
+### C. Configure Node-RED
+ 
+1. Install **Dashboard 2.0** (`@flowfuse/node-red-dashboard`) if it is not installed.
+2. Import the flow from `json file/flows.json` (Menu → Import), or create button groups as below.
+3. Button groups and their values:
+   | Group | Options (label = value) |
+   |---|---|
+   | Fixed Colors | `RED`, `GREEN`, `BLUE`, `YELLOW`, `PURPLE`, `CYAN`, `PINK` |
+   | Lighting Effects | `AUTO`, `RUN` |
+   | Power Control | `OFF` |
+4. Connect all button outputs to one **MQTT Out** node:
+   - Server `broker.hivemq.com`, port `1883`, MQTT 3.1.1, TLS disabled
+   - Topic `smartlight/control`
+5. Deploy the flow and open the dashboard.
+### D. Verify the result
+ 
+For each button, check that:
+ 
+- the LEDs in Wokwi show the expected colour or effect, and
+- the Serial Monitor shows `Command Received: <COMMAND>` and the mode message.
+## 12. Test Results
+ 
+Tested through the Node-RED dashboard in the Wokwi simulation:
+ 
+| Test case | Input command | Expected output | Result |
+|---|---|---|---|
+| 1 | `RED` | All 26 LEDs turn red | Pass |
+| 2 | `GREEN` | All 26 LEDs turn green | Pass |
+| 3 | `BLUE` | All 26 LEDs turn blue | Pass |
+| 4 | `OFF` | All LEDs turn off | Pass |
+ 
+Example Serial Monitor output:
+ 
+```text
+MQTT MESSAGE RECEIVED
+Topic: smartlight/control
+Command: RED
+Command Received: RED
+RED MODE
+```
+ 
+`YELLOW`, `PURPLE`, `CYAN`, `PINK`, `WHITE`, `AUTO` and `RUN` are implemented in the firmware. Add them to the table above only after testing each one.
+ 
+## 13. Screenshots and Demonstration
+ 
+Add your own screenshots in `docs/images/` and link them here:
+ 
+| # | Screenshot | What it shows |
+|---|---|---|
+| 1 | Wokwi circuit | ESP32 with 13 chained LED strips |
+| 2 | Node-RED flow | Buttons connected to MQTT Out, status "connected" |
+| 3 | Dashboard + simulation | Dashboard button pressed, LEDs and Serial Monitor output |
+| 4 | Wokwi code view | `sketch.ino` with Wi-Fi, MQTT and NeoPixel code |
+ 
+Example embed once the files are added:
+ 
+```markdown
+![Dashboard and simulation](docs/images/dashboard-output.png)
+```
+ 
+- **Wokwi project:** _add your shareable Wokwi project URL_
+- **Demonstration video:** _add your video URL_
+## 14. Project Folder Structure
+ 
 ```text
 Smart-Lighting-Control/
-├── Node-RED_Flow 2_files/
-│   └── (Node-RED editor assets and related files)
 ├── Wokwi files/
 │   └── light/
 │       ├── diagram.json
@@ -247,145 +318,48 @@ Smart-Lighting-Control/
 │       └── wokwi-project.txt
 ├── json file/
 │   └── flows.json
+├── docs/
+│   └── images/
 ├── Node-RED_Flow 2.html
+├── Node-RED_Flow 2_files/
 └── README.md
 ```
-
-Folder names above reflect the current repository layout shown during project preparation. If you rename folders, update this section accordingly.
-
-**Repository cleanup recommendation:** The `Node-RED_Flow 2_files/` folder appears to contain exported webpage/editor assets. If `Node-RED_Flow 2.html` is only an exported Node-RED editor page, it may not be a portable Node-RED flow. To make the project easy to reproduce, export the flow from Node-RED using **Menu → Export → JSON**, save it as a clearly named file such as `node-red-flow.json`, and document that file here. Avoid committing unnecessary downloaded dependencies or private data.
-
-## 12. Setup and Execution
-
-### A. Start the Wokwi simulation
-
-1. Open the Wokwi project containing `sketch.ino`, `diagram.json`, and `libraries.txt`.
-2. Confirm the RGB LED uses a common-cathode configuration.
-3. Confirm the RGB connections match GPIO 25, 26, and 27, with COM connected to GND.
-4. Confirm `libraries.txt` contains:
-
-   ```text
-   PubSubClient
-   ```
-
-5. Start the simulation and open the Serial Monitor.
-6. Check that Wi-Fi connects, MQTT connects, and the device subscribes to `smartlight/control`.
-
-### B. Start Node-RED
-
-Install Node.js and Node-RED if needed, then run:
-
-```bash
-node-red
-```
-
-Open the Node-RED editor:
-
-```text
-http://127.0.0.1:1880
-```
-
-The dashboard URL used in this setup is:
-
-```text
-http://127.0.0.1:1880/dashboard/page1
-```
-
-The URL can differ if your Node-RED configuration or dashboard path changes.
-
-### C. Configure Node-RED
-
-1. Install **FlowFuse Dashboard 2.0** if it is not already installed.
-2. Add a dashboard button-group node and assign it to a dashboard group.
-3. Add the options below:
-
-   | Label | Value |
-   |---|---|
-   | RED | `RED` |
-   | GREEN | `GREEN` |
-   | BLUE | `BLUE` |
-   | OFF | `OFF` |
-
-4. Connect the button-group output to an MQTT Out node.
-5. Configure the MQTT broker:
-   - Server: `broker.hivemq.com`
-   - Port: `1883`
-   - MQTT version: `3.1.1`
-   - TLS: disabled for this demonstration
-6. Set the MQTT Out topic to `smartlight/control`.
-7. Deploy the flow and open the dashboard.
-8. Click each button and observe the LED and Serial Monitor.
-
-### D. Verify the end-to-end result
-
-For each button, verify both:
-- The expected LED colour/state in Wokwi.
-- The corresponding command and light status in the Serial Monitor.
-
-## 13. Test Results
-
-The following commands were tested successfully through the Node-RED dashboard in the Wokwi simulation.
-
-| Test case | Input command | Expected output | Result |
-|---|---|---|---|
-| 1 | `RED` | Red LED channel turns on | Pass |
-| 2 | `GREEN` | Green LED channel turns on | Pass |
-| 3 | `BLUE` | Blue LED channel turns on | Pass |
-| 4 | `OFF` | All LED channels turn off | Pass |
-
-Example Serial Monitor output:
-
-```text
-MQTT Message Received: RED
-Light: RED
-```
-
-`ON` is implemented in the code but is not included in the passed test cases until it is tested separately.
-
-## 14. Screenshots and Demonstration
-
-For a complete GitHub project page or academic submission, add your own screenshots in a folder such as `docs/images/`:
-
-1. **Wokwi circuit:** ESP32, RGB LED, resistors, and wiring.
-2. **Node-RED flow:** button group connected to MQTT Out and broker status.
-3. **Dashboard:** RED/GREEN/BLUE/OFF controls.
-4. **Test evidence:** Wokwi LED and Serial Monitor showing a successful command.
-
-If you record a demonstration video, add its public link here:
-
-- **Wokwi project:** _Add your shareable Wokwi project URL_
-- **Demonstration video:** _Add your video URL, if available_
-
-Do not leave placeholder links in the final version; replace them with the actual shareable URLs.
-
+ 
+`Node-RED_Flow 2.html` and its `_files` folder are an exported web page of the editor and are not a portable flow. Use `json file/flows.json` (exported with Menu → Export → JSON) to reproduce the project.
+ 
 ## 15. Limitations
-
-- The project has been demonstrated in simulation; physical hardware operation has not been verified.
-- The project uses a public MQTT broker for demonstration, so broker availability and network conditions can affect operation.
-- MQTT messages are sent through port 1883 without TLS in this configuration.
-- The current dashboard provides basic colour selection and OFF control.
-- The implementation controls one simulated RGB LED.
-
+ 
+- Demonstrated in simulation only; physical hardware has not been verified.
+- Uses a public MQTT broker, so availability and network conditions can affect operation.
+- MQTT runs on port 1883 without TLS or authentication.
+- All LEDs show the same colour in static mode; there is no per-LED or brightness control from the dashboard.
+- Only the commands listed under [Test Results](#12-test-results) have been verified.
 ## 16. Future Enhancements
-
-- Add brightness adjustment.
-- Add more colours and lighting effects.
-- Add a separate power ON/OFF control.
-- Show connection and device status on the dashboard.
-- Add command validation and improved error/status reporting.
-- Use a private MQTT broker with authentication and TLS.
-- Test the design with physical ESP32 hardware after suitable wiring and power checks.
-
+ 
+- Brightness slider and RGB colour picker on the dashboard.
+- More lighting effects and adjustable speed.
+- Device and connection status indicator on the dashboard.
+- Private MQTT broker with authentication and TLS.
+- Testing on a physical ESP32 with real WS2812 strips and a suitable 5 V supply.
 ## 17. Safety and Security Notes
-
-- The public broker is for demonstrations and experiments, not sensitive or production data.
-- The topic `smartlight/control` is predictable. Other public-broker users may publish to the same topic, so use a unique topic for your own testing.
-- Do not publish credentials, personal data, or confidential messages.
-- For production use, configure an authenticated broker and TLS, and use a unique topic namespace.
-
+ 
+- The public broker is meant for demonstrations, not for sensitive or production data.
+- The topic `smartlight/control` is predictable and other public-broker users could publish to it. Use a unique topic for your own testing.
+- Do not publish credentials, personal data or confidential messages.
+- For real hardware, power the LED strips from a suitable supply and share ground with the ESP32.
 ## 18. Author
-
-**Saurabh Raut**  
-B.Tech — Electronics and Computer Engineering  
+ 
+**Saurabh Raut**
+B.Tech – Electronics and Computer Engineering
 Walchand Institute of Technology, Solapur, Maharashtra, India
+ 
 
+
+
+
+
+
+
+
+
+Claude finished the response
