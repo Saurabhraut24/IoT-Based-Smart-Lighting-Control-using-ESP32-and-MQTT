@@ -4,9 +4,9 @@ A simulation-based Internet of Things (IoT) mini-project that remotely controls 
  
 > **Project status:** Simulation tested in Wokwi. The `RED`, `GREEN`, `BLUE` and `OFF` commands have been tested through the dashboard. Other commands are implemented in the firmware but are not listed as tested (see [Test Results](#12-test-results)).
 ---
-##wokvi Link
+wokvi Link
 https://wokwi.com/projects/477145959232628737
----
+
 ---
  
 ## Table of Contents
