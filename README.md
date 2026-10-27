@@ -1,10 +1,10 @@
-# IoT-Based Smart Lighting Control using ESP32, MQTT and Node-RED
+LinkBased Smart Lighting Control using ESP32, MQTT and Node-RED
  
 A simulation-based Internet of Things (IoT) mini-project that remotely controls **26 WS2812 addressable LEDs** (13 strips × 2 pixels) from a web dashboard. The dashboard is built in **Node-RED (Dashboard 2.0)**, commands travel over **MQTT** through the **HiveMQ public broker**, and an **ESP32 simulated in Wokwi** receives them and drives the LEDs with fixed colours, an automatic colour-change mode, a running-light effect and OFF.
  
 > **Project status:** Simulation tested in Wokwi. The `RED`, `GREEN`, `BLUE` and `OFF` commands have been tested through the dashboard. Other commands are implemented in the firmware but are not listed as tested (see [Test Results](#12-test-results)).
 ---
-wokvi Link
+wokvi url link 
 https://wokwi.com/projects/477145959232628737
 
 ---
